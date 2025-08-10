@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AgentCoMa</title>
+<link rel="icon" href="images/agent.png">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: white;
+    color: #4a4a49;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.9rem;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+  header img {
+    height: 85px;
+    margin-right: 15px;
+    margin-top: -30px;
+  }
+  h1 {
+    font-size: 4.5rem;
+    margin: 0;
+    font-weight: 700;
+  }
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  .subheader {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+  .authors {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  .links {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    justify-content: center;
+    width: 100%;
+  }
+  .link-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #007bff;
+    font-size: 1rem;
+    text-decoration: none;
+  }
+  .separator {
+    width: 1px;
+    height: 18px;
+    background-color: black;
+  }
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 50px;
+  }
+  .button {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #4a4a49;
+    color: #fff;
+    padding: 12px 20px;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    width: 260px;
+    box-sizing: border-box;
+  }
+  .button small {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: normal;
+    margin-top: 5px;
+  }
+  .leaderboard-header {
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: left;
+    margin-top: 40px;
+    margin-bottom: 15px;
+  }
+  .leaderboard-sub {
+    font-style: italic;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.9rem;
+    table-layout: fixed; /* added fixed layout for consistent column widths */
+  }
+  th, td {
+    padding: 6px 8px;
+    text-align: left;
+    border: none;
+    font-weight: normal;
+    overflow: hidden; /* prevent overflow with fixed layout */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  th {
+    position: relative;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    border-bottom: none; /* remove default underline */
+  }
+  /* Set column widths */
+  th[data-col="title"] {
+    width: 47%; /* wider */
+    border-bottom: 3px solid #007bff; /* underline for this header */
+    padding-bottom: 6px;
+  }
+  th[data-col="base"] {
+    width: 20%; /* narrower */
+    border-bottom: 3px solid #007bff; /* underline for each header individually */
+    padding-bottom: 6px;
+  }
+  th[data-col="gap"] {
+    width: 20%;
+    border-bottom: 3px solid #007bff;
+    padding-bottom: 6px;
+  }
+  th[data-col="date"] {
+    width: 12%;
+    border-bottom: 3px solid #007bff;
+    padding-bottom: 6px;
+  }
+  th.sort-asc::after,
+  th.sort-desc::after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    pointer-events: none;
+  }
+  th.sort-asc::after {
+    content: "▲";
+  }
+  th.sort-desc::after {
+    content: "▼";
+  }
+  /* Allow wrapping for paper title cells */
+  td[data-paper], /* cells with data-paper attribute */
+  td:nth-child(1) { /* first column cells */
+    white-space: normal;   /* allow wrapping */
+    overflow: visible;     /* don't hide overflow */
+    text-overflow: clip;   /* don't add ellipsis */
+    word-break: break-word; /* break long words if needed */
+    font-size: 0.8rem; /* smaller font */
+  }
+  td:nth-child(2) {
+    font-family: Courier, monospace; /* monospaced font */
+    font-size: 0.725rem; /* smaller font */
+    background-color: #f0f0f0; /* light grey background */
+    color: #333; /* darker text for contrast */
+    padding: 1px 6px; /* some padding inside the tag */
+    margin-top: 6px;
+    border-radius: 10px; /* rounded edges */
+    display: inline-block; /* shrink to fit content */
+    max-width: 100%; /* ensure no overflow */
+    white-space: nowrap; /* keep text in one line */
+    box-sizing: border-box;
+  }
+  td:nth-child(3) { /* first column cells */
+    font-size: 0.85rem; /* smaller font */
+    font-family: Courier, monospace; /* monospaced font */
+    white-space: normal;   /* allow wrapping */
+    overflow: visible;     /* don't hide overflow */
+    text-overflow: clip;   /* don't add ellipsis */
+    word-break: break-word; /* break long words if needed */
+  }
+  td:nth-child(4) { /* first column cells */
+    font-size: 0.85rem; /* smaller font */
+    font-family: Courier, monospace; /* monospaced font */
+    white-space: normal;   /* allow wrapping */
+    overflow: visible;     /* don't hide overflow */
+    text-overflow: clip;   /* don't add ellipsis */
+    word-break: break-word; /* break long words if needed */
+  }
+  .group-separator td {
+    padding: 0;
+    height: 0;
+    border-top: 1px solid lightgrey;
+  }
+  .table-bottom-separator td {
+    padding: 0;
+    height: 0;
+    border-top: 1px solid lightgrey;
+  }
+  .icon {
+    height: 16px;
+    width: 16px;
+    fill: #007bff;
+    vertical-align: middle;
+  }
+  .bottom-logos {
+    display: flex;
+    justify-content: center;  /* Centers horizontally */
+    gap: 10px;                /* Space between images */
+    padding: 20px 0;          /* Some vertical padding */
+    padding-top: 40px;
+  }
+  .bottom-logos img {
+    width: 50px;   /* Small square size */
+    height: 50px;  /* Keeps them square */
+    object-fit: cover; /* Ensures image fills square without distortion */
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="images/agent.png" alt="AgentCoMa Robot" />
+  <h1>AgentCoMa</h1>
+</header>
+
+<div class="subheader">A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios</div>
+
+<div class="authors">Lisa Alazraki, Lihu Chen, Ana Brassard, Joe Stacey, Hossein A. Rahmani, Marek Rei</div>
+
+<div class="links">
+  <a class="link-item" href="#">
+    <!-- Document icon -->
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 21" aria-hidden="true" focusable="false"><path d="M6 2h7l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM13 3.5V9h5L13 3.5z"/></svg>
+    Paper
+  </a>
+  <div class="separator"></div>
+  <a class="link-item" href="#">
+    <!-- GitHub icon -->
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="2 1 20 20" aria-hidden="true" focusable="false"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.71-2.78.6-3.37-1.34-3.37-1.34-.45-1.14-1.11-1.44-1.11-1.44-.91-.62.07-.61.07-.61 1.01.07 1.54 1.04 1.54 1.04.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.95 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.8c.85.004 1.71.114 2.51.336 1.9-1.3 2.74-1.02 2.74-1.02.56 1.37.21 2.39.11 2.64.64.7 1.02 1.6 1.02 2.68 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85 0 1.33-.012 2.4-.012 2.73 0 .27.18.58.69.48A10.005 10.005 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+    Code
+  </a>
+</div>
+
+<div class="buttons">
+  <a class="button" href="#">
+    Download data from HuggingFace
+    <small>(requires entering your name and affiliation)</small>
+  </a>
+  <a class="button" href="#">
+    Evaluated on AgentCoMa in your paper?
+    <small>Self-report results and get added to the leaderboard ✨</small>
+  </a>
+</div>
+
+<p style="text-align: justify;">AgentCoMa is an <b>Agent</b>ic <b>Co</b>mmonsense and <b>Ma</b>th benchmark where each compositional task
+requires both commonsense and mathematical reasoning to be solved. The tasks are set in real-world scenarios: <b>house working</b>, <b>web shopping</b>, <b>science experiments</b>,
+<b>smart assistant</b> and <b>travel agent</b>.</p>
+
+<p style="text-align: justify;">The benchmark is designed to test the mixed-type compositional reasoning abilities of LLMs. 
+Contemporary LLMs perform well on commonsense and math reasoning in isolation, but poorly on AgentCoMa tasks that require their composition.
+This reveals a substantial compositionality gap — i.e., the difference between the accuracy on compositional tasks and the proportion of samples in which all individual reasoning steps are answered correctly in isolation.
+Further details on how and why LLMs often fail on AgentCoMa can be found in our <a href="">paper</a>.
+</p>
+
+<p style="text-align: justify;">We invite researchers to evaluate their frameworks on AgentCoMa and self-report their scores for inclusion in our leaderboard.
+For detailed evaluation instructions, see this <a href>README</a>.
+</p>
+
+<div class="leaderboard-header">Leaderboard</div>
+<!-- <div class="leaderboard-sub">Coming soon.</div> -->
+
+<table id="leaderboard">
+  <thead>
+    <tr>
+      <th data-col="title">Paper</th>
+      <th data-col="base">Base model</th>
+      <th data-col="gap">Compositionality gap</th>
+      <th data-col="date">Reported on</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>Phi4 Mini 3.8B IT</td>
+      <td>-30.5%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>Llama3.1 8B Instruct</td>
+      <td>-35.0%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>Qwen3 14B</td>
+      <td>-28.6%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>Phi3.5 MoE 42B IT</td>
+      <td>-25.5%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>Llama3.3 70B Instruct</td>
+      <td>-16.7%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>Mixtral MoE 141B</td>
+      <td>-24.5%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>Art 3B</td>
+      <td>-23.9%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>DeepSeekR1 8B</td>
+      <td>-37.8%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>Phi4 Reasoning 14.7B</td>
+      <td>-29.5%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>DeepSeekR1 32B</td>
+      <td>-30.0%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>Reflection 70B</td>
+      <td>-16.6%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>GeneralReasoner 4B</td>
+      <td>-37.2%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>SimpleRL 8B</td>
+      <td>-31.7%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>GeneralReasoner 14B</td>
+      <td>-33.9%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>SimpleRL 32B</td>
+      <td>-27.2%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+    <tr>
+      <td data-paper="agentcoma" data-date="2025-01-15"
+      ><a href="">
+        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+      </a>
+    </td>
+      <td>QVQ 72B</td>
+      <td>-31.1%</td>
+      <td data-date="2025-01-15">2025-08-10</td>
+    </tr>
+   
+
+    <tr>
+      <td data-paper="anothepaper" data-date="2025-01-15"
+      ><a href="">
+        Another Paper Title
+      </a>
+    </td>
+      <td>Qwen 14B</td>
+      <td>-20.0%</td>
+      <td data-date="2025-01-15">2025-08-15</td>
+    </tr>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+  const table = document.getElementById('leaderboard');
+  const tbody = table.tBodies[0];
+  const ths = table.querySelectorAll('thead th');
+  let currentSort = { col: null, asc: true };
+
+  // Keep a master copy of the original rows
+  const masterRows = Array.from(tbody.rows).map(row => row.cloneNode(true));
+
+  function parsePercent(str) {
+    return parseFloat(str.replace('%', '').trim());
+  }
+
+  function sortRows(col, asc) {
+    return [...masterRows].sort((a, b) => {
+      let valA, valB;
+      if (col === 'title') {
+        valA = a.cells[0].getAttribute('data-paper') || a.cells[0].innerText;
+        valB = b.cells[0].getAttribute('data-paper') || b.cells[0].innerText;
+      } else if (col === 'base') {
+        valA = a.cells[1].innerText.toLowerCase();
+        valB = b.cells[1].innerText.toLowerCase();
+      } else if (col === 'gap') {
+        valA = parsePercent(a.cells[2].innerText);
+        valB = parsePercent(b.cells[2].innerText);
+      } else if (col === 'date') {
+        valA = new Date(a.cells[3].innerText);
+        valB = new Date(b.cells[3].innerText);
+      }
+      if (valA < valB) return asc ? -1 : 1;
+      if (valA > valB) return asc ? 1 : -1;
+      return 0;
+    });
+  }
+
+  function regroupRows(sortedRows) {
+    tbody.innerHTML = '';
+    let currentPaper = null;
+    let groupRows = [];
+
+    function appendGroup(rows) {
+      if (!rows.length) return;
+
+      if (tbody.rows.length > 0) {
+        const sepRow = document.createElement('tr');
+        sepRow.className = 'group-separator';
+        const sepCell = document.createElement('td');
+        sepCell.colSpan = 4;
+        sepRow.appendChild(sepCell);
+        tbody.appendChild(sepRow);
+      }
+
+      const count = rows.length;
+      rows.forEach((row, idx) => {
+        const newRow = row.cloneNode(true);
+        if (idx === 0) {
+          newRow.cells[0].rowSpan = count;
+          newRow.cells[3].rowSpan = count;
+        } else {
+          newRow.cells[0].style.display = 'none';
+          newRow.cells[3].style.display = 'none';
+        }
+        tbody.appendChild(newRow);
+      });
+
+      // Remove any existing bottom separator first to avoid duplicates
+      const existingBottomSep = tbody.querySelector('.table-bottom-separator');
+      if (existingBottomSep) {
+        existingBottomSep.remove();
+        }
+
+      const bottomSep = document.createElement('tr');
+      bottomSep.className = 'table-bottom-separator';
+
+      const bottomCell = document.createElement('td');
+      bottomCell.colSpan = 4;  // Match your table columns count
+      bottomSep.appendChild(bottomCell);
+
+      tbody.appendChild(bottomSep);
+
+
+    }
+
+    sortedRows.forEach(row => {
+      const paper = row.cells[0].getAttribute('data-paper') || row.cells[0].innerText;
+      if (paper !== currentPaper) {
+        if (groupRows.length > 0) {
+          appendGroup(groupRows);
+          groupRows = [];
+        }
+        currentPaper = paper;
+      }
+      groupRows.push(row);
+    });
+
+    appendGroup(groupRows);
+  }
+
+  function updateSortIndicators() {
+    ths.forEach(th => {
+      th.classList.remove('sort-asc', 'sort-desc');
+      if (th.getAttribute('data-col') === currentSort.col) {
+        th.classList.add(currentSort.asc ? 'sort-asc' : 'sort-desc');
+      }
+    });
+  }
+
+  ths.forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.getAttribute('data-col');
+      if (currentSort.col === col) {
+        currentSort.asc = !currentSort.asc;
+      } else {
+        currentSort.col = col;
+        currentSort.asc = true;
+      }
+      regroupRows(sortRows(col, currentSort.asc));
+      updateSortIndicators();
+    });
+  });
+
+  // Initial display
+  currentSort.col = 'gap';
+  currentSort.asc = false;
+  regroupRows(sortRows(currentSort.col, currentSort.asc));
+//   updateSortIndicators();
+</script>
+
+<div class="bottom-logos">
+    <a href="https://www.imperial.ac.uk/" target="_blank"><img src="images/IMPERIAL_logo.png" alt="Imperial College Logo"></a>
+    <a href="https://www.tohoku.ac.jp/" target="_blank"><img src="images/header_logo.png" alt="Tohoku University Logo"></a>
+    <a href="https://aip.riken.jp/labs/goalorient_tech/nat_lang_understand/" target="_blank"><img src="images/riken.png" alt="Riken Logo"></a>
+    <a href="https://www.ucl.ac.uk/" target="_blank"><img src="images/ucl.png" alt="UCL Logo"></a>
+</div>
+
+</body>
+</html>
