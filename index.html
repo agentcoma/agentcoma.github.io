@@ -7,6 +7,15 @@
 <link rel="icon" href="images/agent.png">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
+  :root{
+    /* adjust this to control how wide the table remains on mobile */
+    --min-table-width: 900px;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
   body {
     font-family: 'Open Sans', sans-serif;
     margin: 0;
@@ -117,16 +126,16 @@
     border-collapse: collapse;
     width: 100%;
     font-size: 0.9rem;
-    table-layout: fixed; /* added fixed layout for consistent column widths */
+    table-layout: fixed; /* desktop: keep fixed layout */
   }
   th, td {
     padding: 6px 8px;
     text-align: left;
     border: none;
     font-weight: normal;
-    overflow: hidden; /* prevent overflow with fixed layout */
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow: hidden; /* desktop: prevent overflow with fixed layout */
+    text-overflow: ellipsis; /* desktop ellipsis */
+    white-space: nowrap; /* desktop single-line cells */
   }
   th {
     position: relative;
@@ -136,51 +145,24 @@
     cursor: pointer;
     border-bottom: none; /* remove default underline */
   }
-  /* Set column widths */
-  th[data-col="title"] {
-    width: 47%; /* wider */
-    border-bottom: 3px solid #007bff; /* underline for this header */
-    padding-bottom: 6px;
+  /* Set column widths (desktop) */
+  th[data-col="title"] { width: 47%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+  th[data-col="base"]  { width: 20%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+  th[data-col="gap"]   { width: 20%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+  th[data-col="date"]  { width: 12%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+  th.sort-asc::after, th.sort-desc::after {
+    content: ""; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 0.7rem; pointer-events: none;
   }
-  th[data-col="base"] {
-    width: 20%; /* narrower */
-    border-bottom: 3px solid #007bff; /* underline for each header individually */
-    padding-bottom: 6px;
-  }
-  th[data-col="gap"] {
-    width: 20%;
-    border-bottom: 3px solid #007bff;
-    padding-bottom: 6px;
-  }
-  th[data-col="date"] {
-    width: 12%;
-    border-bottom: 3px solid #007bff;
-    padding-bottom: 6px;
-  }
-  th.sort-asc::after,
-  th.sort-desc::after {
-    content: "";
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.7rem;
-    pointer-events: none;
-  }
-  th.sort-asc::after {
-    content: "▲";
-  }
-  th.sort-desc::after {
-    content: "▼";
-  }
-  /* Allow wrapping for paper title cells */
-  td[data-paper], /* cells with data-paper attribute */
-  td:nth-child(1) { /* first column cells */
-    white-space: normal;   /* allow wrapping */
-    overflow: visible;     /* don't hide overflow */
-    text-overflow: clip;   /* don't add ellipsis */
-    word-break: break-word; /* break long words if needed */
-    font-size: 0.8rem; /* smaller font */
+  th.sort-asc::after { content: "▲"; }
+  th.sort-desc::after { content: "▼"; }
+
+  /* Allow wrapping for specific table cells on desktop (you had this) */
+  td[data-paper], td:nth-child(1) {
+    white-space: normal;   /* allow wrapping (desktop) */
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+    font-size: 0.8rem;
   }
   td:nth-child(2) {
     font-family: Courier, monospace; /* monospaced font */
@@ -195,7 +177,7 @@
     white-space: nowrap; /* keep text in one line */
     box-sizing: border-box;
   }
-  td:nth-child(3) { /* first column cells */
+  td:nth-child(3), td:nth-child(4) {
     font-size: 0.85rem; /* smaller font */
     font-family: Courier, monospace; /* monospaced font */
     white-space: normal;   /* allow wrapping */
@@ -203,41 +185,52 @@
     text-overflow: clip;   /* don't add ellipsis */
     word-break: break-word; /* break long words if needed */
   }
-  td:nth-child(4) { /* first column cells */
-    font-size: 0.85rem; /* smaller font */
-    font-family: Courier, monospace; /* monospaced font */
-    white-space: normal;   /* allow wrapping */
-    overflow: visible;     /* don't hide overflow */
-    text-overflow: clip;   /* don't add ellipsis */
-    word-break: break-word; /* break long words if needed */
-  }
-  .group-separator td {
-    padding: 0;
-    height: 0;
-    border-top: 1px solid lightgrey;
-  }
-  .table-bottom-separator td {
-    padding: 0;
-    height: 0;
-    border-top: 1px solid lightgrey;
-  }
-  .icon {
-    height: 16px;
-    width: 16px;
-    fill: #007bff;
-    vertical-align: middle;
-  }
-  .bottom-logos {
-    display: flex;
-    justify-content: center;  /* Centers horizontally */
-    gap: 10px;                /* Space between images */
-    padding: 20px 0;          /* Some vertical padding */
-    padding-top: 40px;
-  }
-  .bottom-logos img {
-    width: 50px;   /* Small square size */
-    height: 50px;  /* Keeps them square */
-    object-fit: cover; /* Ensures image fills square without distortion */
+  .group-separator td { padding: 0; height: 0; border-top: 1px solid lightgrey; }
+  .table-bottom-separator td { padding: 0; height: 0; border-top: 1px solid lightgrey; }
+  .icon { height: 16px; width: 16px; fill: #007bff; vertical-align: middle; }
+  .bottom-logos { display: flex; justify-content: center; gap: 10px; padding: 20px 0; padding-top: 40px; }
+  .bottom-logos img { width: 50px; height: 50px; object-fit: cover; }
+
+  /* ---------- MOBILE / SMALL-SCREEN OVERRIDES ---------- */
+  @media (max-width: 700px) {
+    /* keep page confined to viewport and avoid body horizontal scrollbar */
+    body {
+      padding: 10px;
+      max-width: 100%;
+      font-size: 0.9rem;
+      overflow-x: hidden; /* prevents the entire page from scrolling horizontally */
+    }
+
+    /* header / typography tweaks for mobile */
+    header img { height: 60px; margin-top: 0; margin-right: 12px; }
+    h1 { font-size: 2.2rem; text-align: center; }
+    .subheader { font-size: 1.1rem; padding: 0 6px; }
+    .buttons { flex-direction: column; gap: 10px; }
+    .button { width: 100%; font-size: 0.95rem; }
+
+    /* TABLE: put inside a scrollable container and force table to keep desktop proportions */
+    .table-scroll {
+      overflow-x: auto;                      /* scroll only inside this box */
+      -webkit-overflow-scrolling: touch;     /* iOS smooth scroll */
+      max-width: 100%;                       /* never exceed viewport */
+      box-sizing: border-box;
+      border: 1px solid #eee;                /* subtle box to show scroll area */
+      border-radius: 6px;
+      padding: 6px;                          /* room between table and edges */
+      background: #fff;
+    }
+
+    /* Make table keep a fixed (desktop-like) width so it doesn't shrink to viewport width */
+    .table-scroll table {
+      width: var(--min-table-width);         /* fixed width inside the scroll container */
+      min-width: var(--min-table-width);
+      table-layout: auto !important;        /* allow natural column widths */
+      display: inline-table;                /* prevents it from expanding body width */
+    }
+    th[data-col="title"] { width: 25%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+    th[data-col="base"]  { width: 20%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+    th[data-col="gap"]   { width: 20%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+    th[data-col="date"]  { width: 12%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
   }
 </style>
 </head>
@@ -292,24 +285,23 @@ For detailed evaluation instructions, see this <a href>README</a>.
 </p>
 
 <div class="leaderboard-header">Leaderboard</div>
-<!-- <div class="leaderboard-sub">Coming soon.</div> -->
 
-<table id="leaderboard">
-  <thead>
-    <tr>
-      <th data-col="title">Paper</th>
-      <th data-col="base">Base model</th>
-      <th data-col="gap">Compositionality gap</th>
-      <th data-col="date">Reported on</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td data-paper="agentcoma" data-date="2025-01-15"
-      ><a href="">
-        AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
-      </a>
-    </td>
+<!-- WRAPPED TABLE: only this box scrolls on mobile -->
+<div class="table-scroll">
+  <table id="leaderboard">
+    <thead>
+      <tr>
+        <th data-col="title">Paper</th>
+        <th data-col="base">Base model</th>
+        <th data-col="gap">Compositionality gap</th>
+        <th data-col="date">Reported on</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-paper="agentcoma" data-date="2025-01-15"><a href="">
+          AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
+        </a></td>
       <td>Phi4 Mini 3.8B IT</td>
       <td>-30.5%</td>
       <td data-date="2025-01-15">2025-08-10</td>
@@ -480,6 +472,7 @@ For detailed evaluation instructions, see this <a href>README</a>.
     </tr>
   </tbody>
 </table>
+</div>
 
 <script>
   const table = document.getElementById('leaderboard');
