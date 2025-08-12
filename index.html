@@ -146,9 +146,9 @@
     border-bottom: none; /* remove default underline */
   }
   /* Set column widths (desktop) */
-  th[data-col="title"] { width: 47%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-  th[data-col="base"]  { width: 20%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-  th[data-col="gap"]   { width: 20%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+  th[data-col="title"] { width: 50%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+  th[data-col="base"]  { width: 19%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+  th[data-col="gap"]   { width: 19%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
   th[data-col="date"]  { width: 12%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
   th.sort-asc::after, th.sort-desc::after {
     content: ""; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 0.7rem; pointer-events: none;
@@ -228,8 +228,8 @@
       display: inline-table;                /* prevents it from expanding body width */
     }
     th[data-col="title"] { width: 25%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-    th[data-col="base"]  { width: 20%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-    th[data-col="gap"]   { width: 20%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+    th[data-col="base"]  { width: 19%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+    th[data-col="gap"]   { width: 19%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
     th[data-col="date"]  { width: 12%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
   }
 </style>
@@ -272,13 +272,12 @@
 
 <p style="text-align: justify;">AgentCoMa is an <b>Agent</b>ic <b>Co</b>mmonsense and <b>Ma</b>th benchmark where each compositional task
 requires both commonsense and mathematical reasoning to be solved. The tasks are set in real-world scenarios: <b>house working</b>, <b>web shopping</b>, <b>science experiments</b>,
-<b>smart assistant</b> and <b>travel agent</b>.</p>
+<b>smart assistant</b> and <b>travel agent</b>.
+The benchmark is designed to test the mixed-type compositional reasoning abilities of LLMs. 
+Contemporary LLMs perform well on commonsense and math reasoning in isolation, but are far less effective at solving AgentCoMa tasks that require their composition.</p>
 
-<p style="text-align: justify;">The benchmark is designed to test the mixed-type compositional reasoning abilities of LLMs. 
-Contemporary LLMs perform well on commonsense and math reasoning in isolation, but poorly on AgentCoMa tasks that require their composition.
-This reveals a substantial compositionality gap — i.e., the difference between the accuracy on compositional tasks and the proportion of samples in which all individual reasoning steps are answered correctly in isolation.
-Further details on how and why LLMs often fail on AgentCoMa can be found in our <a href="">paper</a>.
-</p>
+<p style="text-align: justify;">We measure the <i>compositionality gap</i> on AgentCoMa — i.e., the difference between the accuracy on the compositional tasks and the proportion of samples where all individual reasoning steps are answered correctly in isolation — 
+and find it to be substantial across many recently-released LLMs, including reasoning models. Further details on how and why LLMs often struggle on AgentCoMa can be found in our <a href="">paper</a>.</p>
 
 <p style="text-align: justify;">We invite researchers to evaluate their frameworks on AgentCoMa and self-report their scores for inclusion in our leaderboard.
 For detailed evaluation instructions, see this <a href>README</a>.
