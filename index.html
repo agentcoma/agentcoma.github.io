@@ -146,10 +146,12 @@
     border-bottom: none; /* remove default underline */
   }
   /* Set column widths (desktop) */
-  th[data-col="title"] { width: 50%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-  th[data-col="base"]  { width: 19%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-  th[data-col="gap"]   { width: 19%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-  th[data-col="date"]  { width: 12%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+  th[data-col="title"] { width: 41%; border-bottom: 3px solid #007bff; padding-bottom: 6px; font-size: 11px; }
+  th[data-col="base"]  { width: 18%; border-bottom: 3px solid #007bff; padding-bottom: 6px; font-size: 11px; }
+  th[data-col="both"]  { width: 12%; border-bottom: 3px solid #007bff; padding-bottom: 6px; font-size: 11px; }
+  th[data-col="comp"]   { width: 12%; border-bottom: 3px solid #007bff; padding-bottom: 6px; font-size: 11px; }
+  th[data-col="gap"]   { width: 8%; border-bottom: 3px solid #007bff; padding-bottom: 6px; font-size: 11px; font-weight: 900;}
+  th[data-col="date"]  { width: 9%; border-bottom: 3px solid #007bff; padding-bottom: 6px; font-size: 11px; }
   th.sort-asc::after, th.sort-desc::after {
     content: ""; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 0.7rem; pointer-events: none;
   }
@@ -162,28 +164,51 @@
     overflow: visible;
     text-overflow: clip;
     word-break: break-word;
-    font-size: 0.8rem;
+    font-size: 0.65rem;
   }
   td:nth-child(2) {
-    font-family: Courier, monospace; /* monospaced font */
-    font-size: 0.725rem; /* smaller font */
-    background-color: #f0f0f0; /* light grey background */
-    color: #333; /* darker text for contrast */
-    padding: 1px 6px; /* some padding inside the tag */
-    margin-top: 6px;
-    border-radius: 10px; /* rounded edges */
-    display: inline-block; /* shrink to fit content */
-    max-width: 100%; /* ensure no overflow */
-    white-space: nowrap; /* keep text in one line */
-    box-sizing: border-box;
+    vertical-align: middle;   /* centers within the row height */
+    /* remove the next line if it exists */
+    /* display: inline-block;  <-- delete this */
+    margin-top: 0;            /* not needed */
+    background: transparent;  /* move the pill bg to an inner element */
   }
   td:nth-child(3), td:nth-child(4) {
-    font-size: 0.85rem; /* smaller font */
+    font-size: 0.7rem; /* smaller font */
     font-family: Courier, monospace; /* monospaced font */
     white-space: normal;   /* allow wrapping */
     overflow: visible;     /* don't hide overflow */
     text-overflow: clip;   /* don't add ellipsis */
     word-break: break-word; /* break long words if needed */
+  }
+  td:nth-child(5) {
+    font-size: 0.7rem; /* smaller font */
+    font-family: Courier, monospace; /* monospaced font */
+    white-space: normal;   /* allow wrapping */
+    overflow: visible;     /* don't hide overflow */
+    text-overflow: clip;   /* don't add ellipsis */
+    word-break: break-word; /* break long words if needed */
+    font-weight: 900;
+  }
+  td:nth-child(6) {
+    font-size: 0.65rem; /* smaller font */
+    font-family: Courier, monospace; /* monospaced font */
+    white-space: normal;   /* allow wrapping */
+    overflow: visible;     /* don't hide overflow */
+    text-overflow: clip;   /* don't add ellipsis */
+    word-break: break-word; /* break long words if needed */
+  }
+  td:nth-child(2) .tag{
+    display: inline-block;
+    font-family: Courier, monospace;
+    font-size: 0.6rem;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: #f0f0f0;
+    color: #333;
+    white-space: nowrap;
+    margin: 2px 6px 2px 0; /* space between pills */
+    line-height: 1.4;
   }
   .group-separator td { padding: 0; height: 0; border-top: 1px solid lightgrey; }
   .table-bottom-separator td { padding: 0; height: 0; border-top: 1px solid lightgrey; }
@@ -228,9 +253,10 @@
       display: inline-table;                /* prevents it from expanding body width */
     }
     th[data-col="title"] { width: 25%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-    th[data-col="base"]  { width: 19%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-    th[data-col="gap"]   { width: 19%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
-    th[data-col="date"]  { width: 12%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+    th[data-col="base"]  { width: 10%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+    th[data-col="both"]  { width: 9%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+    th[data-col="comp"]  { width: 9%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
+    th[data-col="gap"]  { width: 10%; border-bottom: 3px solid #007bff; padding-bottom: 6px; }
   }
 </style>
 </head>
@@ -292,7 +318,9 @@ For detailed evaluation instructions, see this <a href>README</a>.
       <tr>
         <th data-col="title">Paper</th>
         <th data-col="base">Base model</th>
-        <th data-col="gap">Compositionality gap</th>
+        <th data-col="both">All steps correct</th>
+        <th data-col="comp">Composition</th>
+        <th data-col="gap">Gap</th>
         <th data-col="date">Reported on</th>
       </tr>
     </thead>
@@ -301,9 +329,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         <td data-paper="agentcoma" data-date="2025-01-15"><a href="">
           AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
         </a></td>
-      <td>Phi4 Mini 3.8B IT</td>
+      <td><span class="tag">Phi4 Mini 3.8B IT</span></td>
+      <td>66.1%</td>
+      <td>35.6%</td>
       <td>-30.5%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -311,9 +342,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>Llama3.1 8B Instruct</td>
+      <td><span class="tag">Llama3.1 8B Instruct</span></td>
+      <td>68.3%</td>
+      <td>33.3%</td>
       <td>-35.0%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -321,9 +355,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>Qwen3 14B</td>
+      <td><span class="tag">Qwen3 14B</span></td>
+      <td>88.9%</td>
+      <td>60.6%</td>
       <td>-28.6%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -331,9 +368,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>Phi3.5 MoE 42B IT</td>
+      <td><span class="tag">Phi3.5 MoE 42B IT</span></td>
+      <td>87.2%</td>
+      <td>61.7%</td>
       <td>-25.5%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -341,18 +381,24 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>Llama3.3 70B Instruct</td>
+      <td><span class="tag">Llama3.3 70B Instruct</span></td>
+      <td>90.0%</td>
+      <td>73.3%</td>
       <td>-16.7%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
       ><a href="">
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>Mixtral MoE 141B</td>
+      <td><span class="tag">Mixtral MoE 141B</span></td>
+      <td>90.6%</td>
+      <td>66.1%</td>
       <td>-24.5%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
 
     <tr>
@@ -361,9 +407,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>Art 3B</td>
+      <td><span class="tag">Art 3B</span></td>
+      <td>57.8%</td>
+      <td>33.9%</td>
       <td>-23.9%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -371,9 +420,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>DeepSeekR1 8B</td>
+      <td><span class="tag">DeepSeekR1 8B</span></td>
+      <td>72.2%</td>
+      <td>34.4%</td>
       <td>-37.8%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -381,9 +433,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>Phi4 Reasoning 14.7B</td>
+      <td><span class="tag">Phi4 Reasoning 14.7B</span></td>
+      <td>91.7</td>
+      <td>62.2%</td>
       <td>-29.5%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -391,9 +446,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>DeepSeekR1 32B</td>
+      <td><span class="tag">DeepSeekR1 32B</span></td>
+      <td>90.0%</td>
+      <td>60.0%</td>
       <td>-30.0%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -401,9 +459,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>Reflection 70B</td>
+      <td><span class="tag">Reflection 70B</span></td>
+      <td>82.2%</td>
+      <td>65.6%</td>
       <td>-16.6%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>  
     </tr>
 
     <tr>
@@ -412,9 +473,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>GeneralReasoner 4B</td>
+      <td><span class="tag">GeneralReasoner 4B</span></td>
+      <td>73.9%</td>
+      <td>36.7%</td>
       <td>-37.2%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -422,9 +486,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>SimpleRL 8B</td>
+      <td><span class="tag">SimpleRL 8B</span></td>
+      <td>56.7%</td>
+      <td>25.0%</td>
       <td>-31.7%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -432,9 +499,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>GeneralReasoner 14B</td>
+      <td><span class="tag">GeneralReasoner 14B</span></td>
+      <td>80.0%</td>
+      <td>46.1%</td>
       <td>-33.9%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -442,9 +512,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>SimpleRL 32B</td>
+      <td><span class="tag">SimpleRL 32B</span></td>
+      <td>93.9%</td>
+      <td>66.7%</td>
       <td>-27.2%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
     <tr>
       <td data-paper="agentcoma" data-date="2025-01-15"
@@ -452,9 +525,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         AgentCoMa: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios
       </a>
     </td>
-      <td>QVQ 72B</td>
+      <td><span class="tag">QVQ 72B</span></td>
+      <td>87.8%</td>
+      <td>56.7%</td>
       <td>-31.1%</td>
       <td data-date="2025-01-15">2025-08-10</td>
+      <td></td>
     </tr>
    
 
@@ -464,9 +540,12 @@ For detailed evaluation instructions, see this <a href>README</a>.
         Another Paper Title
       </a>
     </td>
-      <td>Qwen 14B</td>
+      <td><span class="tag">Qwen 14B</span></td>
+      <td>80.0%</td>
+      <td>60.0%</td>
       <td>-20.0%</td>
       <td data-date="2025-01-15">2025-08-15</td>
+      <td></td>
     </tr>
     </tr>
   </tbody>
@@ -495,12 +574,18 @@ For detailed evaluation instructions, see this <a href>README</a>.
       } else if (col === 'base') {
         valA = a.cells[1].innerText.toLowerCase();
         valB = b.cells[1].innerText.toLowerCase();
-      } else if (col === 'gap') {
+      } else if (col === 'both') {
         valA = parsePercent(a.cells[2].innerText);
         valB = parsePercent(b.cells[2].innerText);
+      } else if (col === 'comp') {
+        valA = parsePercent(a.cells[3].innerText);
+        valB = parsePercent(b.cells[3].innerText);
+      } else if (col === 'gap') {
+        valA = parsePercent(a.cells[4].innerText);
+        valB = parsePercent(b.cells[4].innerText);
       } else if (col === 'date') {
-        valA = new Date(a.cells[3].innerText);
-        valB = new Date(b.cells[3].innerText);
+        valA = new Date(a.cells[5].innerText);
+        valB = new Date(b.cells[5].innerText);
       }
       if (valA < valB) return asc ? -1 : 1;
       if (valA > valB) return asc ? 1 : -1;
@@ -520,7 +605,7 @@ For detailed evaluation instructions, see this <a href>README</a>.
         const sepRow = document.createElement('tr');
         sepRow.className = 'group-separator';
         const sepCell = document.createElement('td');
-        sepCell.colSpan = 4;
+        sepCell.colSpan = 6;
         sepRow.appendChild(sepCell);
         tbody.appendChild(sepRow);
       }
@@ -530,10 +615,10 @@ For detailed evaluation instructions, see this <a href>README</a>.
         const newRow = row.cloneNode(true);
         if (idx === 0) {
           newRow.cells[0].rowSpan = count;
-          newRow.cells[3].rowSpan = count;
+          newRow.cells[6].rowSpan = count;
         } else {
           newRow.cells[0].style.display = 'none';
-          newRow.cells[3].style.display = 'none';
+          newRow.cells[6].style.display = 'none';
         }
         tbody.appendChild(newRow);
       });
@@ -548,7 +633,7 @@ For detailed evaluation instructions, see this <a href>README</a>.
       bottomSep.className = 'table-bottom-separator';
 
       const bottomCell = document.createElement('td');
-      bottomCell.colSpan = 4;  // Match your table columns count
+      bottomCell.colSpan = 6;  // Match your table columns count
       bottomSep.appendChild(bottomCell);
 
       tbody.appendChild(bottomSep);
@@ -600,6 +685,63 @@ For detailed evaluation instructions, see this <a href>README</a>.
   regroupRows(sortRows(currentSort.col, currentSort.asc));
 //   updateSortIndicators();
 </script>
+
+<!-- Citation section -->
+<p style="margin-top: 3rem;"><strong>Citation</strong></p>
+<div class="citation-box">
+  <pre><code id="citation">
+@article{alazraki2025agentcoma,
+  title   = {Agent{C}o{M}a: A Compositional Benchmark Mixing Commonsense and Mathematical Reasoning in Real-World Scenarios},
+  author  = {Alazraki, Lisa and Chen, Lihu and Brassard, Ana and Stacey, Joe and Rahmani, Hossein A. and Rei, Marek},
+  year    = {2025}
+}
+  </code></pre>
+  <button class="copy-btn" onclick="copyCitation()">Copy</button>
+</div>
+
+<script>
+function copyCitation() {
+  const citation = document.getElementById("citation").innerText;
+  navigator.clipboard.writeText(citation).then(() => {});
+}
+</script>
+
+<style>
+.citation-box {
+  width: 98%;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f9f9f9;
+  padding: 8px;
+  font-size: 0.7rem;
+  font-family: monospace;
+  position: relative;
+  display: inline-block;   /* box only as wide/tall as its contents */
+  margin-bottom: 1rem;
+}
+
+.citation-box pre {
+  margin: 0;   /* remove extra spacing */
+}
+
+.copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: hsl(0, 0%, 46%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  background: #007bff;
+}
+</style>
+
 
 <div class="bottom-logos">
     <a href="https://www.imperial.ac.uk/" target="_blank"><img src="images/imperial_logo.png" alt="Imperial College Logo"></a>
